@@ -1,10 +1,11 @@
 [Desktop Entry]
 Name=plant
 Comment=plant record
-Exec=python3 /home/pi/plant.py
-Icon=/home/pi/plant.png
+Exec=python3 /home/pi/plant/plant.py
+Icon=/home/pi/plant/plant.png
 Terminal=true
 MultipleArgs=false
 Type=Application
 Categories=Application;Development;
 StartupNotify=true
+X-KeepTerminal=true

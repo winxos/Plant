@@ -1,4 +1,5 @@
 # -- coding: utf-8 --
+
 import sys
 import threading
 import cv2
@@ -8,25 +9,12 @@ import datetime
 #can't use relative path
 sys.path.append("/opt/MVS/Samples/aarch64/Python/MvImport")
 from MvCameraControl_class import *
- 
-
 import time
-import RPi.GPIO as gpio
 import json
-from gps import gps_start
-from gps import plantInfo
+from gps import gps_init, gpsInfo
 from sensor import sensor_init, read_temp, getserial
-btn1 = threading.Event()
-btn2 = threading.Event()
-
-
-
-def cb(c):
-    print("key down %d"% c)
-    if c==37:
-        btn1.set()
-    if c==38:
-        btn2.set()
+from inout import io_init, btn_capture, btn_print
+from filenum import get_cur_num
 
 g_bExit = False
 save_path = "/home/pi/Desktop/data/"
@@ -39,18 +27,12 @@ img_w=5472
 img_h=3648
 img_c=3
 dev_id = getserial()
-cur_num = 0
+cur_num = get_cur_num()
 
 def app_init():
-    gpio.setmode(gpio.BOARD)
-    gpio.setup(38,gpio.IN,pull_up_down=gpio.PUD_UP)
-    gpio.add_event_detect(38,gpio.FALLING)
-    gpio.add_event_callback(38,cb)
-    gpio.setup(37,gpio.IN,pull_up_down=gpio.PUD_UP)
-    gpio.add_event_detect(37,gpio.FALLING)
-    gpio.add_event_callback(37,cb)
+    io_init()
     print("DEV ID:[%s]"%dev_id)
-    gps_start()
+    gps_init()
     sensor_init()
 #opencv转换显示
 def work_thread(cam=0, pData=0, nDataSize=0):
@@ -73,32 +55,32 @@ def work_thread(cam=0, pData=0, nDataSize=0):
             pass
 
         cv2.putText(preview, '%s%04d'%(datetime.datetime.now().strftime("%Y%m%d"),cur_num), (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0xff, 0xff, 0xff), 2)
-        if "north" in plantInfo:
-            cv2.putText(preview, '    N:%.3f'%plantInfo["north"], (500, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 0xcc, 0x99), 2)
-        if "east" in plantInfo:
-            cv2.putText(preview, '    E:%.3f'%plantInfo["east"], (500, 100), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 0xcc, 0x99), 2)
+        if "north" in gpsInfo:
+            cv2.putText(preview, '    N:%.3f'%gpsInfo["north"], (500, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 0xcc, 0x99), 2)
+        if "east" in gpsInfo:
+            cv2.putText(preview, '    E:%.3f'%gpsInfo["east"], (500, 100), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 0xcc, 0x99), 2)
         
         cv2.putText(preview, ' TEMP:%.1f C'%t, (500, 150), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 0xcc, 0x99), 2)
         cv2.putText(preview, 'Humid:%.1f %%'%h, (500, 200), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 0xcc, 0x99), 2)
-        if btn1.is_set():
+        if btn_capture.is_set():
             cv2.putText(preview, 'captured!', (200, 300), cv2.FONT_HERSHEY_SIMPLEX, 3, (50, 50, 255), 5)
             file ="%s%04d"%(datetime.datetime.now().strftime('%Y%m%d'),cur_num)
             cv2.imwrite(save_path + file + ".jpg",raw)
             j = {}
             j["device_id"] = dev_id
             j["record_time"] = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
-            j["east"] = plantInfo["east"]
-            j["north"] = plantInfo["north"]
+            j["east"] = gpsInfo["east"]
+            j["north"] = gpsInfo["north"]
             j["temperature(C)"] = t
             j["humidity(%)"] = h
             j["image_name"] = file + ".jpg"
             with open("%s%s.txt"%(save_path,file),"w") as f:
                 json.dump(j, f, indent=2)
             cur_num+=1
-            btn1.clear()
-        if btn2.is_set():
+            btn_capture.clear()
+        if btn_print.is_set():
             cv2.putText(preview, 'print!', (200, 300), cv2.FONT_HERSHEY_SIMPLEX, 3, (50, 50, 255), 5)
-            btn2.clear()
+            btn_print.clear()
         if g_bExit == True:
             break
         cv2.imshow('preview', preview)
