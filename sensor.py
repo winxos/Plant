@@ -35,6 +35,7 @@ def getserial():
 
 
 def sensor_init():
+    global i2c
     try:
         i2c = smbus.SMBus(0)
         i2c.write_byte_data(addr, 0x23, 0x34)
