@@ -27,6 +27,7 @@ def io_init():
     gpio.setup(pin_capture, gpio.IN, pull_up_down=gpio.PUD_UP)
     gpio.add_event_detect(pin_capture, gpio.FALLING, bouncetime=100)
     gpio.add_event_callback(pin_capture, cb)
+    print("io module loaded")
 
 
 if __name__ == "__main__":

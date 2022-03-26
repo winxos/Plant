@@ -2,25 +2,12 @@
 
 import smbus
 from time import sleep
-i2c = None
-addr = 0x44
+import threading
 
-
-def read_temp():
-    temp = 20.0
-    RH = 50.0
-    try:
-        i2c.write_byte_data(addr, 0xe0, 0x0)
-        data = i2c.read_i2c_block_data(addr, 0x0, 6)
-        rawT = ((data[0]) << 8) | (data[1])
-        rawR = ((data[3]) << 8) | (data[4])
-        temp = round(-45 + rawT * 175 / 65535, 2)
-        RH = round(100 * rawR / 65535, 2)
-    except:
-        pass
-    return (temp, RH)
-
-
+sensorInfo ={}
+sensorInfo["temp"]=20.0
+sensorInfo["humid"]=50.0
+sensorInfo["error"] = threading.Event()
 def getserial():
     # Extract serial from cpuinfo file
     cpuserial = "0000000000000000"
@@ -33,20 +20,42 @@ def getserial():
 
     return cpuserial
 
-
-def sensor_init():
-    global i2c
+def work_thread():
+    addr = 0x44
     try:
         i2c = smbus.SMBus(0)
         i2c.write_byte_data(addr, 0x23, 0x34)
     except:
-        pass
-
+        print("i2c device not found")
+    sleep(1)
+    while True:
+        sensorInfo["error"].clear()
+        try:
+            i2c.write_byte_data(addr, 0xe0, 0x0)
+            data = i2c.read_i2c_block_data(addr, 0x0, 6)
+            rawT = ((data[0]) << 8) | (data[1])
+            rawR = ((data[3]) << 8) | (data[4])
+            sensorInfo["temp"] = round(-45 + rawT * 175 / 65535, 2)
+            sensorInfo["humid"] = round(100 * rawR / 65535, 2)
+        except:
+            sensorInfo["error"].set()
+            try:
+                i2c = smbus.SMBus(0)
+                i2c.write_byte_data(addr, 0x23, 0x34)
+            except:
+                pass
+        sleep(1)
+    
+def sensor_init():
+    hThreadHandle = threading.Thread(target=work_thread,daemon=True)
+    hThreadHandle.start()
+    sensorInfo["cpuid"]=getserial()
+    print("sensorInfo thread start")
+    print("cpuid:%s"%sensorInfo["cpuid"])
 
 if __name__ == "__main__":
-    print("sensor test")
-    print("dev id: %s"%getserial())
+    print("sensorInfo test")
     sensor_init()
     while True:
-        print(read_temp())
+        print("temp:%s humid:%s"%(sensorInfo["temp"],sensorInfo["humid"]))
         sleep(1)
