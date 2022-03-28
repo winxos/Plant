@@ -41,14 +41,14 @@ SCREEN_HEIGHT=480
 
 def data_save(cur_num):
     file ="%s%04d"%(datetime.datetime.now().strftime('%Y%m%d'),cur_num)
-    cv2.imwrite(save_path + file + ".jpg",raw)
+    cv2.imwrite(save_path + file + ".jpg", camInfo["raw"])
     j = {}
     j["device_id"] = sensorInfo["cpuid"]
     j["record_time"] = datetime.datetime.now().strftime('%Y%m%d%H%M%S')
     j["east"] = gpsInfo["east"]
     j["north"] = gpsInfo["north"]
-    j["temperature(C)"] = t
-    j["humidity(%)"] = h
+    j["temperature(C)"] = sensorInfo["temp"]
+    j["humidity(%)"] = sensorInfo["humid"]
     j["image_name"] = file + ".jpg"
     with open("%s%s.txt"%(save_path,file),"w") as f:
         json.dump(j, f, indent=2)

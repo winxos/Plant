@@ -22,10 +22,10 @@ def cb(c):
 def io_init():
     gpio.setmode(gpio.BOARD)
     gpio.setup(pin_print, gpio.IN, pull_up_down=gpio.PUD_UP)
-    gpio.add_event_detect(pin_print, gpio.FALLING, bouncetime=100)
+    gpio.add_event_detect(pin_print, gpio.FALLING, bouncetime=500)
     gpio.add_event_callback(pin_print, cb)
     gpio.setup(pin_capture, gpio.IN, pull_up_down=gpio.PUD_UP)
-    gpio.add_event_detect(pin_capture, gpio.FALLING, bouncetime=100)
+    gpio.add_event_detect(pin_capture, gpio.FALLING, bouncetime=500)
     gpio.add_event_callback(pin_capture, cb)
     print("io module loaded")
 
