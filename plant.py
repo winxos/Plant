@@ -84,7 +84,7 @@ def work_thread():
         if camInfo["error"].is_set():
             cv2.putText(preview, ' CAMERA ERR', (50, 200), cv2.FONT_HERSHEY_SIMPLEX, 2, (0x00, 0x00, 0xcc), 4)
         else:
-            preview =cv2.addWeighted(preview,0.5,camInfo["preview"],0.5,0)
+            preview =cv2.addWeighted(preview,0.4,camInfo["preview"],0.6,0)
         if btn_capture.is_set():
             cv2.putText(preview, 'captured!', (200, 300), cv2.FONT_HERSHEY_SIMPLEX, 3, (50, 50, 255), 5)
             data_save(cur_num)

@@ -120,7 +120,8 @@ def work_thread():
             temp = temp.reshape((CAM_H, CAM_W, 3))
             raw = cv2.cvtColor(temp, cv2.COLOR_BGR2RGB) #default is bgr
             camInfo["raw"] = raw
-            camInfo["preview"] = cv2.resize(raw, (800, 480), interpolation=cv2.INTER_AREA) # for show
+            camInfo["preview"] = raw[CAM_H//2-240:CAM_H//2+240,CAM_W//2-400:CAM_W//2+400]
+            # cv2.resize(raw, (800, 480), interpolation=cv2.INTER_AREA) # for show
             sleep(1)
         del pData
 
