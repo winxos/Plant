@@ -23,11 +23,14 @@ def get_cur_num():
     if len(q) == 0:
         return 0
     q.sort(reverse=True)
-    f = q[0].split('.')[0]
+    id = 0
+    while id<len(q) and len(q[id].split('.')[0])!=12:
+        id+=1
+    f = q[id].split('.')[0]
     today = "%s" % (datetime.datetime.now().strftime('%Y%m%d'))
     id = 0
     if f[:-4] == today:
-        id = int(q[0].split('.')[0][-4:]) + 1
+        id = int(f.split('.')[0][-4:]) + 1
     return id
 
 
