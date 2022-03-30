@@ -23,7 +23,7 @@ import datetime
 from time import sleep
 
 from gps import gps_init, gpsInfo
-from inout import io_init, btn_capture, btn_print
+from inout import io_init, btns
 from filenum import get_cur_num
 from sensor import sensor_init,sensorInfo
 from cam import cam_init, camInfo
@@ -85,14 +85,14 @@ def work_thread():
             cv2.putText(preview, ' CAMERA ERR', (50, 200), cv2.FONT_HERSHEY_SIMPLEX, 2, (0x00, 0x00, 0xcc), 4)
         else:
             preview =cv2.addWeighted(preview,0.4,camInfo["preview"],0.6,0)
-        if btn_capture.is_set():
+        if btns[1].is_set():
             cv2.putText(preview, 'captured!', (200, 300), cv2.FONT_HERSHEY_SIMPLEX, 3, (50, 50, 255), 5)
             data_save(cur_num)
             cur_num+=1
-            btn_capture.clear()
-        if btn_print.is_set():
+            btns[1].clear()
+        if btns[2].is_set():
             cv2.putText(preview, 'print!', (200, 300), cv2.FONT_HERSHEY_SIMPLEX, 3, (50, 50, 255), 5)
-            btn_print.clear()
+            btns[2].clear()
 
         cv2.imshow('preview', preview)
         k = cv2.waitKey(500) & 0xff

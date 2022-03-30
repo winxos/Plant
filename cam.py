@@ -15,7 +15,7 @@ from time import sleep
 import threading
 import numpy as np
 import cv2
-
+from inout import btns
 camInfo ={}
 camInfo["error"] = threading.Event()
 CAM_W=5472
@@ -94,6 +94,7 @@ def cam_release(cam):
 
 def work_thread():
     camInfo["preview"] = np.zeros((480,800, 3), np.uint8)
+    idx = 0
     while True:
         sleep(1)
         cam = get_cam() #check online
@@ -120,8 +121,13 @@ def work_thread():
             temp = temp.reshape((CAM_H, CAM_W, 3))
             raw = cv2.cvtColor(temp, cv2.COLOR_BGR2RGB) #default is bgr
             camInfo["raw"] = raw
-            camInfo["preview"] = raw[CAM_H//2-240:CAM_H//2+240,CAM_W//2-400:CAM_W//2+400]
-            # cv2.resize(raw, (800, 480), interpolation=cv2.INTER_AREA) # for show
+            if btns[0].is_set():
+                idx += 1
+                btns[0].clear()
+            if idx % 2 == 0:
+                camInfo["preview"] = raw[CAM_H//2-240:CAM_H//2+240,CAM_W//2-400:CAM_W//2+400] # mid area
+            else:
+                camInfo["preview"] = cv2.resize(raw, (800, 480), interpolation=cv2.INTER_AREA) # small
             sleep(1)
         del pData
 
