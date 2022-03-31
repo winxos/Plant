@@ -1,11 +1,9 @@
 [Desktop Entry]
 Name=plant
 Comment=plant record
-Exec=python3 /home/pi/plant/plant.py
+Exec=/home/pi/plant/start.sh
 Icon=/home/pi/plant/plant.png
 Terminal=true
-MultipleArgs=false
 Type=Application
-Categories=Application;Development;
-StartupNotify=true
+Categories=Utility
 X-KeepTerminal=true

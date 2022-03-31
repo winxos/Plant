@@ -1,0 +1,10 @@
+[Unit]
+Description=plant info
+
+[Service]
+Environment=DISPLAY=:0
+Environment=XAUTHORITY=/home/pi/.Xauthority
+ExecStart=/home/pi/plant/start.sh
+
+[Install]
+WantedBy=graphical.target
