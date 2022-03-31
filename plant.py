@@ -3,7 +3,7 @@
 
 import os.path
 import sys
-
+print(os.environ)
 #os imigrade
 if os.path.exists("/opt/MVS/Samples/armhf"):
     #can't use relative path
@@ -102,6 +102,7 @@ def work_thread():
             break
 
 if __name__ == "__main__":
+    print("plant system start at %s"%datetime.datetime.now().strftime("%c"))
     app_init()
     hThreadHandle = threading.Thread(target=work_thread)
     hThreadHandle.start()
