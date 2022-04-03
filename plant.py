@@ -28,6 +28,7 @@ from inout import io_init, btns
 from filenum import get_cur_num
 from sensor import sensor_init,sensorInfo
 from cam import cam_init, camInfo
+from printer import print_info
 
 save_path = "/home/pi/Desktop/data/"
 
@@ -40,8 +41,7 @@ if not os.path.exists(save_path):
 SCREEN_WIDTH=800
 SCREEN_HEIGHT=480
 
-def data_save(cur_num):
-    file ="%s%04d"%(datetime.datetime.now().strftime('%Y%m%d'),cur_num)
+def data_save(file):
     cv2.imwrite(save_path + file + ".jpg", camInfo["raw"])
     j = {}
     j["device_id"] = sensorInfo["cpuid"]
@@ -67,7 +67,8 @@ def work_thread():
     cv2.setWindowProperty("preview",cv2.WND_PROP_FULLSCREEN,cv2.WINDOW_FULLSCREEN) #fullscreen
     while True:
         preview = np.zeros((SCREEN_HEIGHT,SCREEN_WIDTH, 3), np.uint8)
-        cv2.putText(preview, '%s%04d'%(datetime.datetime.now().strftime("%Y%m%d"),cur_num), (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0xff, 0xff, 0xff), 2)
+        file = '%s%04d'%(datetime.datetime.now().strftime("%Y%m%d"),cur_num)
+        cv2.putText(preview, file, (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0xff, 0xff, 0xff), 2)
 
         if sensorInfo["error"].is_set():
             cv2.putText(preview, ' SENSOR ERR', (500, 150), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0x00, 0x00, 0xcc), 2)
@@ -93,6 +94,7 @@ def work_thread():
             btns[1].clear()
         if btns[2].is_set():
             cv2.putText(preview, 'print!', (200, 300), cv2.FONT_HERSHEY_SIMPLEX, 3, (50, 50, 255), 5)
+            print_info(file, file)
             btns[2].clear()
 
         cv2.imshow('preview', preview)
