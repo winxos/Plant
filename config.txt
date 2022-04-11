@@ -39,19 +39,17 @@
 #arm_freq=800
 
 # Uncomment some or all of these to enable the optional hardware interfaces
-dtparam=i2c_arm=on
-dtparam=i2c_vc=on
+#dtparam=i2c_arm=on
 #dtparam=i2s=on
 #dtparam=spi=on
-dtoverlay=uart2
-dtoverlay=uart3
-dtoverlay=uart4
+dtparam=i2c_vc=on
+dtoverlay=gpio-shutdown
 # Uncomment this to enable infrared communication.
 #dtoverlay=gpio-ir,gpio_pin=17
 #dtoverlay=gpio-ir-tx,gpio_pin=18
-dtoverlay=gpio-shutdown
+
 # Additional overlays and parameters are documented /boot/overlays/README
-#gpio=37,38=pu
+
 # Enable audio (loads snd_bcm2835)
 dtparam=audio=on
 
@@ -62,11 +60,8 @@ camera_auto_detect=1
 display_auto_detect=1
 
 # Enable DRM VC4 V3D driver
-dtoverlay=vc4-kms-v3d
+#dtoverlay=vc4-kms-v3d
 max_framebuffers=2
-
-# Run in 64-bit mode
-arm_64bit=1
 
 # Disable compensation for displays with overscan
 disable_overscan=1
@@ -90,4 +85,4 @@ hdmi_group=2
 hdmi_mode=87
 hdmi_cvt 800 480 60 6 0 0 0
 hdmi_drive=1
-
+dtoverlay=miniuart-bt

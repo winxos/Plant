@@ -11,13 +11,14 @@ def build_qrcode(s):
 def print_info(s,qr):
     ser = serial.Serial("/dev/ttyAMA0", 9600) #serial 0
     serial_hex(ser, [0x1b,0x40]) #init
-    serial_hex(ser, [0x1d,0x57,0x05]) #mag
+    serial_hex(ser, [0x1b,0x73,0x2d,0x30]) #reduce color
+    serial_hex(ser, [0x1d,0x57,0x03]) #mag
     serial_hex(ser, [0x1d,0x51,0x00,0x00]) #loc
     serial_hex(ser, build_qrcode(qr))
     serial_hex(ser, [0x0d]) #\n
-    serial_hex(ser, [0x1b,0x58,0x02,0x02]) #char size
+    serial_hex(ser, [0x1b,0x58,0x01,0x01]) #char size
     ser.write(s.encode('gbk'))
     serial_hex(ser, [0x1b,0x69]) #next page
 if __name__ == "__main__":
     print("printer test")
-    print_info("你好 world","202203040001")
+    print_info("202203040001","202203040001")

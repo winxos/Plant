@@ -61,6 +61,11 @@ def app_init():
     cam_init()
 #opencv转换显示
 def work_thread():
+    NORTH_Y = 150
+    EAST_Y = 200
+    TEMP_Y = 250
+    HUMID_Y = 300
+    INFO_Y = 300
     cur_num = get_cur_num()
     cv2.namedWindow("preview", cv2.WINDOW_NORMAL)
     # cv2.resizeWindow("preview", 800, 480)
@@ -71,29 +76,29 @@ def work_thread():
         cv2.putText(preview, file, (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0xff, 0xff, 0xff), 2)
 
         if sensorInfo["error"].is_set():
-            cv2.putText(preview, ' SENSOR ERR', (500, 150), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0x00, 0x00, 0xcc), 2)
+            cv2.putText(preview, ' SENSOR ERR', (500, TEMP_Y), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0x00, 0x00, 0xcc), 2)
         else:
-            cv2.putText(preview, ' TEMP:%.1f C'%sensorInfo["temp"], (500, 150), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 0xcc, 0x99), 2)
-            cv2.putText(preview, 'Humid:%.1f %%'%sensorInfo["humid"], (500, 200), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 0xcc, 0x99), 2)
+            cv2.putText(preview, ' TEMP:%.1f C'%sensorInfo["temp"], (500, TEMP_Y), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 0xcc, 0x99), 2)
+            cv2.putText(preview, 'Humid:%.1f %%'%sensorInfo["humid"], (500, HUMID_Y), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 0xcc, 0x99), 2)
         if gpsInfo["error"].is_set():
-            cv2.putText(preview, '     GPS ERR', (500, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0x00, 0x00, 0xcc), 2)
+            cv2.putText(preview, '     GPS ERR', (500, NORTH_Y), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0x00, 0x00, 0xcc), 2)
         else:
             if gpsInfo["connected"]:
-                cv2.putText(preview, '    N:%.3f'%gpsInfo["north"], (500, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 0xcc, 0x99), 2)
-                cv2.putText(preview, '    E:%.3f'%gpsInfo["east"], (500, 100), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 0xcc, 0x99), 2)
+                cv2.putText(preview, '    N:%.3f'%gpsInfo["north"], (500, NORTH_Y), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 0xcc, 0x99), 2)
+                cv2.putText(preview, '    E:%.3f'%gpsInfo["east"], (500, EAST_Y), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (255, 0xcc, 0x99), 2)
             else:
-                cv2.putText(preview, 'GPS MISS', (500, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0xff, 0xcc, 0x00), 1)
+                cv2.putText(preview, 'GPS MISS', (500, NORTH_Y), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0xff, 0xcc, 0x00), 1)
         if camInfo["error"].is_set():
-            cv2.putText(preview, ' CAMERA ERR', (50, 200), cv2.FONT_HERSHEY_SIMPLEX, 2, (0x00, 0x00, 0xcc), 4)
+            cv2.putText(preview, ' CAMERA ERR', (50, INFO_Y), cv2.FONT_HERSHEY_SIMPLEX, 2, (0x00, 0x00, 0xcc), 4)
         else:
             preview =cv2.addWeighted(preview,0.4,camInfo["preview"],0.6,0)
         if btns[1].is_set():
-            cv2.putText(preview, 'captured!', (200, 300), cv2.FONT_HERSHEY_SIMPLEX, 3, (50, 50, 255), 5)
-            data_save(cur_num)
+            cv2.putText(preview, 'captured!', (200, INFO_Y), cv2.FONT_HERSHEY_SIMPLEX, 3, (50, 50, 255), 5)
+            data_save(file)
             cur_num+=1
             btns[1].clear()
         if btns[2].is_set():
-            cv2.putText(preview, 'print!', (200, 300), cv2.FONT_HERSHEY_SIMPLEX, 3, (50, 50, 255), 5)
+            cv2.putText(preview, 'print!', (200, INFO_Y), cv2.FONT_HERSHEY_SIMPLEX, 3, (50, 50, 255), 5)
             print_info(file, file)
             btns[2].clear()
 

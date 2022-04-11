@@ -124,7 +124,7 @@ def work_thread():
             if btns[0].is_set():
                 idx += 1
                 btns[0].clear()
-            if idx % 2 == 0:
+            if idx % 2 != 0:
                 camInfo["preview"] = raw[CAM_H//2-240:CAM_H//2+240,CAM_W//2-400:CAM_W//2+400] # mid area
             else:
                 camInfo["preview"] = cv2.resize(raw, (800, 480), interpolation=cv2.INTER_AREA) # small

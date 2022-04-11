@@ -12,7 +12,7 @@ gpsInfo["connected"] = False
 def work_thread():
     while True:
         try:
-            ser = serial.Serial("/dev/ttyUSB0", 9600, timeout=t)
+            ser = serial.Serial("/dev/ttyUSB0", 9600, timeout=0.1)
             data = ser.readline().decode("utf8")
             # $GNRMC,034820.000,A,3046.6637,N,10355.7521,E,0.00,187.68,230222,,,D*7D\r\n
             if data.startswith("$GNRMC"):
